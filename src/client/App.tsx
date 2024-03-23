@@ -1,17 +1,20 @@
 import { GASClient } from 'gas-client';
-import * as server from '../server/main.ts';
+import * as main from '../server/main.ts';
 import './App.css';
 
-const { serverFunctions } = new GASClient<typeof server>();
+type Server = typeof main;
+
+const { serverFunctions } = new GASClient<Server>();
 function App() {
   const handleClickButton = async () => {
-    const document = await serverFunctions.getDocument();
-    console.log('🚀 ~ handleClickButton ~ document:', document);
+    const textArr = await serverFunctions.getTargetText();
+    console.log('🚀 ~ handleClickButton ~ textArr:', textArr);
+    await serverFunctions.showModalDialog(textArr);
   };
 
   return (
     <>
-      <button onClick={handleClickButton}>Kanji to Romaji</button>
+      <button onClick={handleClickButton}>ローマ字に変換</button>
     </>
   );
 }
