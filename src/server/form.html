@@ -1,0 +1,62 @@
+<form
+  id="convert-form"
+  style="text-align: left"
+>
+  <label style="display: block">
+    郵便番号：
+    <br />
+    <input
+      style="width: 100%; margin-top: 5px"
+      name="post-code"
+      minlength="7"
+      maxlength="8"
+      pattern="\\d*"
+      value="<?= postcode ?>"
+    />
+  </label>
+  <br />
+  <label style="display: block">
+    住所：
+    <br />
+    <input
+      style="width: 100%; margin-top: 5px"
+      name="address"
+      value="<?= address ?>"
+    />
+  </label>
+  <p style="margin-bottom: 5px">どちらか選択してください</p>
+  <? for (let i = 0; i < names.length; i++) { ?>
+  <div style="display: flex; gap: 5px">
+    <label>
+      <input
+        type="radio"
+        name="select-name"
+      />
+    </label>
+    <label>
+      <input
+        style="width: 100%"
+        name="<?= names[i] ?>"
+        value="<?= names[i] ?>"
+      />
+    </label>
+  </div>
+  <? } ?>
+  <label style="display: block; margin-top: 20px">
+    電話番号：
+    <br />
+    <input
+      style="width: 100%; margin-top: 5px"
+      type="tel"
+      name="phone-number"
+      value="<?= phoneNumber ?>"
+    />
+  </label>
+</form>
+<button
+  type="submit"
+  style="margin-top: 10px; padding: 3px"
+>
+  適用
+</button>
+<script></script>

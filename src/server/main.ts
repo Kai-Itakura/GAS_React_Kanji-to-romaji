@@ -1,8 +1,15 @@
-type ExportsType = typeof import('./gooLab') & typeof import('./yahoo');
+type ExportsType = typeof import('./convertAddress') & typeof import('./convertName');
 
 declare const exports: ExportsType;
 
-// @ts-expect-error: This method used for Google App Script as Global Function
+interface FormData {
+  postcode: string;
+  address: string;
+  names: string[];
+  phoneNumber: string;
+}
+
+// @ts-expect-error: This method will be used for Google App Script as Global Function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onOpen = () => {
   const ui = DocumentApp.getUi();
@@ -22,18 +29,42 @@ const showModalDialog = (textArr: string[]) => {
   const [postcode, address, name, phoneNumber] = textArr;
 
   const newPostcode = postcode.replace('-', '');
-
-  const katakana = exports.tokenize(address);
-
+  const newAddress = exports.tokenizeAddress(address) as string;
+  const newNames = exports.convertName(name) as string[];
   const newPhoneNumber = phoneNumber.replace('0', '＋81');
+  setInitialFormData({ postcode: newPostcode, address: newAddress, names: newNames, phoneNumber: newPhoneNumber });
 
-  const html = `
-    <p>どちらか選択してください</p>
-    <button>${newPostcode}<br>${katakana}<br>${name}<br>${newPhoneNumber}</button>
-  `;
+  const dialogTemplate = HtmlService.createTemplateFromFile('form');
 
-  const dialogHtml = HtmlService.createHtmlOutput(html);
-  DocumentApp.getUi().showModalDialog(dialogHtml, 'ローマ字に変換');
+  dialogTemplate.postcode = newPostcode;
+  dialogTemplate.address = newAddress;
+  dialogTemplate.names = newNames;
+  dialogTemplate.phoneNumber = newPhoneNumber;
+
+  const htmlOutput = dialogTemplate.evaluate();
+
+  DocumentApp.getUi().showModalDialog(htmlOutput, 'ローマ字に変換');
+};
+
+const setInitialFormData = (formData: FormData) => {
+  const { postcode, address, names, phoneNumber } = formData;
+  PropertiesService.getScriptProperties().setProperties({
+    postcode,
+    address,
+    names: JSON.stringify(names),
+    phoneNumber,
+  });
+};
+
+// @ts-expect-error: This method will be used from client
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getInitialFormData = (): FormData => {
+  const postcode = PropertiesService.getScriptProperties().getProperty('postcode') as string;
+  const address = PropertiesService.getScriptProperties().getProperty('address') as string;
+  const names = JSON.parse(PropertiesService.getScriptProperties().getProperty('names') as string) as string[];
+  const phoneNumber = PropertiesService.getScriptProperties().getProperty('phoneNumber') as string;
+
+  return { postcode, address, names, phoneNumber };
 };
 
 export { getTargetText, showModalDialog };

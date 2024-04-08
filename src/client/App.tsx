@@ -8,7 +8,6 @@ const { serverFunctions } = new GASClient<Server>();
 function App() {
   const handleClickButton = async () => {
     const textArr = await serverFunctions.getTargetText();
-    console.log('🚀 ~ handleClickButton ~ textArr:', textArr);
     await serverFunctions.showModalDialog(textArr);
   };
 
