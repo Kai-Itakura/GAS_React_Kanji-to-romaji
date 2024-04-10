@@ -60,7 +60,6 @@ const fetchKuronekoApi: TFetchApi<string> = (sentence) => {
 
   try {
     const res = UrlFetchApp.fetch(url).getContentText();
-    console.log('🚀 ~ res:', res);
     return res;
   } catch (error) {
     console.error('Kuroneko APIのデータ取得時にエラーが発生しました。: ', error);
@@ -87,7 +86,6 @@ const fetchYahooKanaApi: TFetchApi<string[]> = (sentence) => {
 
   try {
     const res = UrlFetchApp.fetch(url, options).getContentText();
-    console.log('🚀 ~ res:', res);
     const segments = JSON.parse(res).result.segment;
     const readings = segments.map((segment: { candidate: object[]; reading: string }) => {
       return segment.reading;

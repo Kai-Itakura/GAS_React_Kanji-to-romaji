@@ -4,7 +4,6 @@ type convertNameType = (name: string) => string[] | undefined;
 type TConvertToRomajiAll = (texts: (string | undefined)[]) => string[] | undefined;
 
 export const convertName: convertNameType = (name: string) => {
-  name = '河野竜輝';
   const converted1 = exports.fetchGooLabKanaApi(name);
   const converted2 = exports.fetchKuronekoApi(name);
 

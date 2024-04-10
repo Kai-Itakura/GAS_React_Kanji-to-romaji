@@ -2,10 +2,17 @@ type ExportsType = typeof import('./convertAddress') & typeof import('./convertN
 
 declare const exports: ExportsType;
 
-interface FormData {
+interface InitialFormData {
   postcode: string;
   address: string;
   names: string[];
+  phoneNumber: string;
+}
+
+interface FormData {
+  postcode: string;
+  address: string;
+  name: string;
   phoneNumber: string;
 }
 
@@ -41,12 +48,12 @@ const showModalDialog = (textArr: string[]) => {
   dialogTemplate.names = newNames;
   dialogTemplate.phoneNumber = newPhoneNumber;
 
-  const htmlOutput = dialogTemplate.evaluate();
+  const htmlOutput = dialogTemplate.evaluate().setWidth(500).setHeight(400);
 
   DocumentApp.getUi().showModalDialog(htmlOutput, 'ローマ字に変換');
 };
 
-const setInitialFormData = (formData: FormData) => {
+const setInitialFormData = (formData: InitialFormData) => {
   const { postcode, address, names, phoneNumber } = formData;
   PropertiesService.getScriptProperties().setProperties({
     postcode,
@@ -58,13 +65,31 @@ const setInitialFormData = (formData: FormData) => {
 
 // @ts-expect-error: This method will be used from client
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getInitialFormData = (): FormData => {
+const getInitialFormData = (): InitialFormData => {
   const postcode = PropertiesService.getScriptProperties().getProperty('postcode') as string;
   const address = PropertiesService.getScriptProperties().getProperty('address') as string;
   const names = JSON.parse(PropertiesService.getScriptProperties().getProperty('names') as string) as string[];
   const phoneNumber = PropertiesService.getScriptProperties().getProperty('phoneNumber') as string;
 
+  PropertiesService.getScriptProperties().deleteProperty('postcode');
+  PropertiesService.getScriptProperties().deleteProperty('address');
+  PropertiesService.getScriptProperties().deleteProperty('names');
+  PropertiesService.getScriptProperties().deleteProperty('phoneNumber');
+
   return { postcode, address, names, phoneNumber };
+};
+
+// @ts-expect-error: This method will be used from client
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const writeFormData = (formData: FormData) => {
+  const document = DocumentApp.getActiveDocument();
+  const body = document.getBody();
+  const { postcode, address, name, phoneNumber } = formData;
+  body.appendParagraph(' ');
+  body.appendParagraph(postcode);
+  body.appendParagraph(address);
+  body.appendParagraph(name);
+  body.appendParagraph(phoneNumber);
 };
 
 export { getTargetText, showModalDialog };

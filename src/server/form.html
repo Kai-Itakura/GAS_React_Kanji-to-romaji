@@ -1,16 +1,14 @@
 <form
   id="convert-form"
   style="text-align: left"
+  onsubmit="handleSubmit"
 >
   <label style="display: block">
     郵便番号：
     <br />
     <input
       style="width: 100%; margin-top: 5px"
-      name="post-code"
-      minlength="7"
-      maxlength="8"
-      pattern="\\d*"
+      name="postcode"
       value="<?= postcode ?>"
     />
   </label>
@@ -24,19 +22,21 @@
       value="<?= address ?>"
     />
   </label>
+  <p style="margin-bottom: 5px">名前：</p>
   <p style="margin-bottom: 5px">どちらか選択してください</p>
   <? for (let i = 0; i < names.length; i++) { ?>
-  <div style="display: flex; gap: 5px">
+  <div style="display: flex; gap: 5px; margin-top: 5px">
     <label>
-      <input
-        type="radio"
-        name="select-name"
+      <input type="radio" name="select-name" id="name<?= i + 1 ?>"
+      <? if(i === 0) { ?>
+      checked
+      <? } ?>
       />
     </label>
     <label>
       <input
         style="width: 100%"
-        name="<?= names[i] ?>"
+        name="name<?= i + 1 ?>"
         value="<?= names[i] ?>"
       />
     </label>
@@ -52,11 +52,53 @@
       value="<?= phoneNumber ?>"
     />
   </label>
+  <button
+    type="submit"
+    style="margin-top: 10px; padding: 3px"
+    id="submit-button"
+  >
+    適用
+  </button>
 </form>
-<button
-  type="submit"
-  style="margin-top: 10px; padding: 3px"
->
-  適用
-</button>
-<script></script>
+<script>
+  const submitButton = document.querySelector('#convert-form');
+  submitButton.addEventListener('submit', handleSubmit);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const form = document.forms[0];
+    const formElms = form.querySelectorAll('input');
+    const formData = Array.from(formElms).reduce((prev, curr, index, inputs) => {
+      switch (curr.name) {
+        case 'postcode':
+          prev.postcode = curr.value;
+          break;
+
+        case 'address':
+          prev.address = curr.value;
+          break;
+
+        case 'select-name':
+          if (curr.checked) {
+            const id = curr.id;
+            const selectedName = inputs.find((input) => input.name === id);
+
+            prev.name = selectedName.value;
+          }
+          break;
+
+        case 'phone-number':
+          prev.phoneNumber = curr.value;
+          break;
+
+        default:
+          break;
+      }
+
+      return prev;
+    }, {});
+
+    const result = google.script.run.writeFormData(formData);
+  }
+</script>
