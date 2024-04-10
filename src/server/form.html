@@ -67,6 +67,8 @@
   function handleSubmit(e) {
     e.preventDefault();
 
+    e.target.innerHTML = 'Loading...';
+
     const form = document.forms[0];
     const formElms = form.querySelectorAll('input');
     const formData = Array.from(formElms).reduce((prev, curr, index, inputs) => {
@@ -99,6 +101,10 @@
       return prev;
     }, {});
 
-    const result = google.script.run.writeFormData(formData);
+    const result = google.script.run
+      .withSuccessHandler(() => {
+        google.script.host.close();
+      })
+      .writeFormData(formData);
   }
 </script>
