@@ -67,8 +67,6 @@
   function handleSubmit(e) {
     e.preventDefault();
 
-    e.target.innerHTML = 'Loading...';
-
     const form = document.forms[0];
     const formElms = form.querySelectorAll('input');
     const formData = Array.from(formElms).reduce((prev, curr, index, inputs) => {
@@ -100,6 +98,10 @@
 
       return prev;
     }, {});
+
+    const submitBtn = e.target;
+    submitBtn.innerHTML = 'Loading...';
+    submitBtn.style.cssText = 'font-size: 24px; text-align: center; margin-top: 30%';
 
     const result = google.script.run
       .withSuccessHandler(() => {
