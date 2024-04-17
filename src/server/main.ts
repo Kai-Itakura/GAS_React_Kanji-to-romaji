@@ -16,6 +16,15 @@ interface FormData {
   phoneNumber: string;
 }
 
+// @ts-expect-error This function is executed at the time when a GET request is received.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const doGet = () => {
+  return HtmlService.createTemplateFromFile('index')
+    .evaluate()
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .setTitle('Kanji to Romaji');
+};
+
 // @ts-expect-error: This method will be used for Google App Script as Global Function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onOpen = () => {

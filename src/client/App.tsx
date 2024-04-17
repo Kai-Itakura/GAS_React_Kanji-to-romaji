@@ -1,19 +1,15 @@
-import { GASClient } from 'gas-client';
-import * as main from '../server/main.ts';
+// import { GASClient } from 'gas-client';
+// import * as main from '../server/main.ts';
 import './App.css';
+import Form from './Form.tsx';
 
-type Server = typeof main;
+// type Server = typeof main;
 
-const { serverFunctions } = new GASClient<Server>();
+// const { serverFunctions } = new GASClient<Server>();
 function App() {
-  const handleClickButton = async () => {
-    const textArr = await serverFunctions.getTargetText();
-    await serverFunctions.showModalDialog(textArr);
-  };
-
   return (
     <>
-      <button onClick={handleClickButton}>ローマ字に変換</button>
+      <Form />
     </>
   );
 }
