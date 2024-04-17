@@ -8,13 +8,14 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "npm run build && mkdir claspDist && rsync -a src/server/ claspDist && cp dist/index.html claspDist && cp appsscript.json claspDist && clasp push && rm -rf claspDist"
+    "deploy": "./redeploy.sh"
   },
   "dependencies": {
     "@types/node": "^20.11.27",
     "gas-client": "^1.1.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.3"
   },
   "devDependencies": {
     "@types/google-apps-script": "^1.0.82",
