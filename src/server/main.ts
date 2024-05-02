@@ -1,3 +1,5 @@
+import { KanjiFormType } from '../client/components/form/types/formTypes';
+
 type ExportsType = typeof import('./convertAddress') & typeof import('./convertName');
 
 declare const exports: ExportsType;
@@ -25,49 +27,30 @@ const doGet = () => {
     .setTitle('Kanji to Romaji');
 };
 
-// @ts-expect-error: This method will be used for Google App Script as Global Function
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const onOpen = () => {
-  const ui = DocumentApp.getUi();
-  const htmlOutput = HtmlService.createHtmlOutputFromFile('index.html');
+const convertKanjiToRomaji = (formData: KanjiFormType) => {
+  const { postcode, address, name, phoneNumber } = formData;
 
-  ui.showSidebar(htmlOutput);
+  setKnajiFormData(formData);
+
+  const rPostcode = postcode.replace('-', '');
+  const rAddress = exports.tokenizeAddress(address) as string;
+  const rNames = exports.convertName(name) as string[];
+  const rPhoneNumber = phoneNumber.replace('0', '＋81');
+
+  return {
+    rPostcode,
+    rAddress,
+    rNames,
+    rPhoneNumber,
+  };
 };
 
-const getTargetText = () => {
-  const document = DocumentApp.getActiveDocument();
-  const docText = document.getBody().getText();
-  const textArr = docText.split(/\n/);
-  return textArr;
-};
-
-const showModalDialog = (textArr: string[]) => {
-  const [postcode, address, name, phoneNumber] = textArr;
-
-  const newPostcode = postcode.replace('-', '');
-  const newAddress = exports.tokenizeAddress(address) as string;
-  const newNames = exports.convertName(name) as string[];
-  const newPhoneNumber = phoneNumber.replace('0', '＋81');
-  setInitialFormData({ postcode: newPostcode, address: newAddress, names: newNames, phoneNumber: newPhoneNumber });
-
-  const dialogTemplate = HtmlService.createTemplateFromFile('form');
-
-  dialogTemplate.postcode = newPostcode;
-  dialogTemplate.address = newAddress;
-  dialogTemplate.names = newNames;
-  dialogTemplate.phoneNumber = newPhoneNumber;
-
-  const htmlOutput = dialogTemplate.evaluate().setWidth(500).setHeight(400);
-
-  DocumentApp.getUi().showModalDialog(htmlOutput, 'ローマ字に変換');
-};
-
-const setInitialFormData = (formData: InitialFormData) => {
-  const { postcode, address, names, phoneNumber } = formData;
+const setKnajiFormData = (formData: KanjiFormType) => {
+  const { postcode, address, name, phoneNumber } = formData;
   PropertiesService.getScriptProperties().setProperties({
     postcode,
     address,
-    names: JSON.stringify(names),
+    name,
     phoneNumber,
   });
 };
@@ -101,4 +84,4 @@ const writeFormData = (formData: FormData) => {
   body.appendParagraph(phoneNumber);
 };
 
-export { getTargetText, showModalDialog };
+export { convertKanjiToRomaji };

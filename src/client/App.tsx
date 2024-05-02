@@ -1,16 +1,14 @@
-// import { GASClient } from 'gas-client';
-// import * as main from '../server/main.ts';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css';
-import Form from './Form.tsx';
+import Form from './components/form/Form.tsx';
 
-// type Server = typeof main;
+const queryClient = new QueryClient();
 
-// const { serverFunctions } = new GASClient<Server>();
 function App() {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Form />
-    </>
+    </QueryClientProvider>
   );
 }
 
