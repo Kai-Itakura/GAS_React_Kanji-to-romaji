@@ -26,22 +26,25 @@ const KanjiForm = ({ methods, onSubmit }: KanjiFormProps) => {
 
   return (
     <Form {...methods}>
-      <form onSubmit={onSubmit}>
+      <form
+        onSubmit={onSubmit}
+        className='h-fit w-1/2'
+      >
         {kanjiFormFields.map(({ name, label, type }) => (
           <FormField
             key={name}
             control={methods.control}
             name={name}
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>{label}</FormLabel>
+              <FormItem className='mb-8'>
+                <FormLabel className='text-left block'>{label}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     type={type}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className='text-left' />
               </FormItem>
             )}
           />

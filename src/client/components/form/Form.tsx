@@ -6,10 +6,12 @@ const Form = () => {
   console.log('🚀 ~ Form ~ romajiData:', romajiData);
 
   return (
-    <KanjiForm
-      methods={methods}
-      onSubmit={onSubmit}
-    />
+    <div className='flex justify-center items-center w-screen h-screen'>
+      <KanjiForm
+        methods={methods}
+        onSubmit={onSubmit}
+      />
+    </div>
   );
 };
 
