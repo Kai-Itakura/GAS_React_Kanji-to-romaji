@@ -1,40 +1,54 @@
-import { FormProvider, UseFormReturn } from 'react-hook-form';
-import Input from '../../Input/Input';
+import { UseFormReturn } from 'react-hook-form';
 import { KanjiFormType } from '../types/formTypes';
-import Button from '../../button/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { HTMLInputTypeAttribute } from 'react';
+import { Button } from '@/components/ui/button';
 
 type KanjiFormProps = {
   methods: UseFormReturn<KanjiFormType>;
   onSubmit: () => Promise<void>;
 };
 
+type KanjiFormFields = {
+  name: keyof KanjiFormType;
+  label: '郵便番号' | '住所' | '名前' | '電話番号';
+  type?: HTMLInputTypeAttribute;
+};
+
 const KanjiForm = ({ methods, onSubmit }: KanjiFormProps) => {
+  const kanjiFormFields: KanjiFormFields[] = [
+    { name: 'postcode', label: '郵便番号' },
+    { name: 'address', label: '住所' },
+    { name: 'name', label: '名前' },
+    { name: 'phoneNumber', label: '電話番号', type: 'tel' },
+  ];
+
   return (
-    <FormProvider {...methods}>
+    <Form {...methods}>
       <form onSubmit={onSubmit}>
-        <Input
-          name='postcode'
-          text='郵便番号'
-        />
-        <Input
-          name='address'
-          text='住所'
-        />
-        <Input
-          name='name'
-          text='名前'
-        />
-        <Input
-          name='phoneNumber'
-          text='電話番号'
-          type='tel'
-        />
-        <Button
-          text='ローマ字に変換'
-          type='submit'
-        />
+        {kanjiFormFields.map(({ name, label, type }) => (
+          <FormField
+            key={name}
+            control={methods.control}
+            name={name}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{label}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type={type}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
+        <Button type='submit'>ローマ字に変換</Button>
       </form>
-    </FormProvider>
+    </Form>
   );
 };
 

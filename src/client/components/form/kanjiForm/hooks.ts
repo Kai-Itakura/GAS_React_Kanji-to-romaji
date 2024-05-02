@@ -6,6 +6,7 @@ import { KanjiFormSchema } from '../utils/FormValidation';
 import { KanjiFormType, RomajiFormType } from '../types/formTypes';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import * as z from 'zod';
 
 type Server = typeof main;
 
@@ -26,7 +27,16 @@ export const useKanjiForm = () => {
   });
 
   // フォームメソッド
-  const methods = useForm<KanjiFormType>({ mode: 'onChange', resolver: zodResolver(KanjiFormSchema) });
+  const methods = useForm<z.infer<typeof KanjiFormSchema>>({
+    mode: 'onChange',
+    resolver: zodResolver(KanjiFormSchema),
+    defaultValues: {
+      postcode: '',
+      address: '',
+      name: '',
+      phoneNumber: '',
+    },
+  });
 
   const onSubmit: SubmitHandler<KanjiFormType> = async (kanjiFormData, e) => {
     e?.preventDefault();
