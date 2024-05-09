@@ -1,19 +1,16 @@
-import { GASClient } from 'gas-client';
-import * as main from '../server/main.ts';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css';
+import Form from './components/form/Form.tsx';
 
-type Server = typeof main;
+const queryClient = new QueryClient();
 
-const { serverFunctions } = new GASClient<Server>();
 function App() {
-  const handleClickButton = async () => {
-    const textArr = await serverFunctions.getTargetText();
-    await serverFunctions.showModalDialog(textArr);
-  };
-
   return (
     <>
-      <button onClick={handleClickButton}>ローマ字に変換</button>
+      <h1 className='m-5 text-xl font-bold'>ローマ字変換フォーム</h1>
+      <QueryClientProvider client={queryClient}>
+        <Form />
+      </QueryClientProvider>
     </>
   );
 }

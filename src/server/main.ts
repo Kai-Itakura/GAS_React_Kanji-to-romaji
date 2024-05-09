@@ -1,95 +1,66 @@
+import { KanjiFormType, RomajiFormType } from '../client/components/form/types/formTypes';
+
 type ExportsType = typeof import('./convertAddress') & typeof import('./convertName');
 
 declare const exports: ExportsType;
 
-interface InitialFormData {
-  postcode: string;
-  address: string;
-  names: string[];
-  phoneNumber: string;
-}
-
-interface FormData {
-  postcode: string;
-  address: string;
-  name: string;
-  phoneNumber: string;
-}
-
-// @ts-expect-error: This method will be used for Google App Script as Global Function
+// @ts-expect-error This function is executed at the time when a GET request is received.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const onOpen = () => {
-  const ui = DocumentApp.getUi();
-  const htmlOutput = HtmlService.createHtmlOutputFromFile('index.html');
-
-  ui.showSidebar(htmlOutput);
+const doGet = () => {
+  return HtmlService.createTemplateFromFile('index')
+    .evaluate()
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .setTitle('Kanji to Romaji');
 };
 
-const getTargetText = () => {
-  const document = DocumentApp.getActiveDocument();
-  const docText = document.getBody().getText();
-  const textArr = docText.split(/\n/);
-  return textArr;
-};
-
-const showModalDialog = (textArr: string[]) => {
-  const [postcode, address, name, phoneNumber] = textArr;
-
-  const newPostcode = postcode.replace('-', '');
-  const newAddress = exports.tokenizeAddress(address) as string;
-  const newNames = exports.convertName(name) as string[];
-  const newPhoneNumber = phoneNumber.replace('0', '＋81');
-  setInitialFormData({ postcode: newPostcode, address: newAddress, names: newNames, phoneNumber: newPhoneNumber });
-
-  const dialogTemplate = HtmlService.createTemplateFromFile('form');
-
-  dialogTemplate.postcode = newPostcode;
-  dialogTemplate.address = newAddress;
-  dialogTemplate.names = newNames;
-  dialogTemplate.phoneNumber = newPhoneNumber;
-
-  const htmlOutput = dialogTemplate.evaluate().setWidth(500).setHeight(400);
-
-  DocumentApp.getUi().showModalDialog(htmlOutput, 'ローマ字に変換');
-};
-
-const setInitialFormData = (formData: InitialFormData) => {
-  const { postcode, address, names, phoneNumber } = formData;
-  PropertiesService.getScriptProperties().setProperties({
-    postcode,
-    address,
-    names: JSON.stringify(names),
-    phoneNumber,
-  });
-};
-
-// @ts-expect-error: This method will be used from client
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getInitialFormData = (): InitialFormData => {
-  const postcode = PropertiesService.getScriptProperties().getProperty('postcode') as string;
-  const address = PropertiesService.getScriptProperties().getProperty('address') as string;
-  const names = JSON.parse(PropertiesService.getScriptProperties().getProperty('names') as string) as string[];
-  const phoneNumber = PropertiesService.getScriptProperties().getProperty('phoneNumber') as string;
-
-  PropertiesService.getScriptProperties().deleteProperty('postcode');
-  PropertiesService.getScriptProperties().deleteProperty('address');
-  PropertiesService.getScriptProperties().deleteProperty('names');
-  PropertiesService.getScriptProperties().deleteProperty('phoneNumber');
-
-  return { postcode, address, names, phoneNumber };
-};
-
-// @ts-expect-error: This method will be used from client
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const writeFormData = (formData: FormData) => {
-  const document = DocumentApp.getActiveDocument();
-  const body = document.getBody();
+const convertKanjiToRomaji = (formData: KanjiFormType) => {
   const { postcode, address, name, phoneNumber } = formData;
-  body.appendParagraph(' ');
+
+  setKnajiFormData(formData);
+
+  const rPostcode = postcode.replace('-', '');
+  const rAddress = exports.tokenizeAddress(address) as string;
+  const rNames = exports.convertName(name) as string[];
+  const rPhoneNumber = phoneNumber.replace('0', '+81');
+
+  return {
+    rPostcode,
+    rAddress,
+    rName1: rNames[0],
+    rName2: rNames[1],
+    rPhoneNumber,
+  };
+};
+
+const createDocument = (
+  { rPostcode, rAddress, rName, rPhoneNumber }: RomajiFormType,
+  { postcode, address, name, phoneNumber }: KanjiFormType
+) => {
+  const doc = DocumentApp.create('任意のタイトルを入力してください');
+
+  const body = doc.getBody();
   body.appendParagraph(postcode);
   body.appendParagraph(address);
   body.appendParagraph(name);
   body.appendParagraph(phoneNumber);
+  body.appendParagraph(' ');
+  body.appendParagraph(rPostcode);
+  body.appendParagraph(rAddress);
+  body.appendParagraph(rName);
+  body.appendParagraph(rPhoneNumber);
+
+  const docUrl = doc.getUrl();
+  return docUrl;
 };
 
-export { getTargetText, showModalDialog };
+const setKnajiFormData = (formData: KanjiFormType) => {
+  const { postcode, address, name, phoneNumber } = formData;
+  PropertiesService.getScriptProperties().setProperties({
+    postcode,
+    address,
+    name,
+    phoneNumber,
+  });
+};
+
+export { convertKanjiToRomaji, createDocument };
