@@ -5,20 +5,28 @@ import { romajiFormSchema } from '../utils/FormValidation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { RomajiDataType, RomajiFormType } from '../types/formTypes';
+import { KanjiFormType, RomajiDataType, RomajiFormType } from '../types/formTypes';
 import { useState } from 'react';
 
 type Server = typeof main;
 
+type MutationFnArg = {
+  romajiFormData: RomajiFormType;
+  kanjiData: KanjiFormType;
+};
+
 const { serverFunctions } = new GASClient<Server>();
 
-export const useRomajiForm = ({ rPostcode, rAddress, rName1, rName2, rPhoneNumber }: RomajiDataType) => {
+export const useRomajiForm = (
+  { rPostcode, rAddress, rName1, rName2, rPhoneNumber }: RomajiDataType,
+  kanjiData: KanjiFormType
+) => {
   const [url, setUrl] = useState('');
 
   const formMutation = useMutation({
     mutationKey: ['romaji'],
-    mutationFn: async (romajiFormData: RomajiFormType) => {
-      const data = await serverFunctions.createDocument(romajiFormData);
+    mutationFn: async ({ romajiFormData, kanjiData }: MutationFnArg) => {
+      const data = await serverFunctions.createDocument(romajiFormData, kanjiData);
       return data;
     },
     // GASで正常にDocumentが作成されたら、そのDocumentにページ遷移
@@ -58,7 +66,7 @@ export const useRomajiForm = ({ rPostcode, rAddress, rName1, rName2, rPhoneNumbe
       rPhoneNumber,
     };
 
-    formMutation.mutate(filteredData);
+    formMutation.mutate({ romajiFormData: filteredData, kanjiData });
 
     romajiForm.reset();
   };

@@ -46,9 +46,10 @@ const convertKanjiToRomaji = (formData: KanjiFormType) => {
   };
 };
 
-const createDocument = (formData: RomajiFormType) => {
-  console.log('🚀 ~ createDocument ~ formData:', formData);
-  const doc = DocumentApp.create('任意のタイトルに変更してください');
+const createDocument = (romajiData: RomajiFormType, kanjiData: KanjiFormType) => {
+  console.log('🚀 ~ createDocument ~ kanjiData:', kanjiData);
+  console.log('🚀 ~ createDocument ~ romajiData:', romajiData);
+  const doc = DocumentApp.create('任意のタイトルを入力してください');
   const docUrl = doc.getUrl();
   return docUrl;
 };

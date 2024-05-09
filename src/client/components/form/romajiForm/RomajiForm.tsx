@@ -1,7 +1,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useRomajiForm } from './hooks';
 import { useEffect, useRef } from 'react';
-import { RomajiDataType } from '../types/formTypes';
+import { KanjiFormType, RomajiDataType } from '../types/formTypes';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
@@ -11,13 +11,15 @@ import { Textarea } from '@/components/ui/textarea';
 import Dialog from '@/components/dialog/dialog';
 
 type RomajiFormProps = {
-  data: RomajiDataType;
+  romajiData: RomajiDataType;
+  kanjiData: KanjiFormType;
 };
 
-const RomajiForm = ({ data }: RomajiFormProps) => {
-  const { romajiForm, onSubmit, url } = useRomajiForm(data);
+const RomajiForm = ({ romajiData, kanjiData }: RomajiFormProps) => {
+  const { romajiForm, onSubmit, url } = useRomajiForm(romajiData, kanjiData);
   const { control, trigger, watch, formState } = romajiForm;
 
+  // フォーム内のセレクトでzodのバリデーションをトリガーするための処理
   useEffect(() => {
     const subscription = watch((_value, { name }) => {
       if (name === 'selectName') {
@@ -29,11 +31,11 @@ const RomajiForm = ({ data }: RomajiFormProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch, trigger]);
 
+  // このコンポーネントがマウントされた時にその位置までスムーススクロール
   const formRef = useRef<HTMLFormElement>(null);
-
   useEffect(() => {
     formRef.current?.scrollIntoView({ behavior: 'smooth' });
-  });
+  }, [formRef]);
 
   return (
     <>

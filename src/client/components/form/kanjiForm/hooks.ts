@@ -31,10 +31,10 @@ export const useKanjiForm = () => {
     mode: 'onChange',
     resolver: zodResolver(KanjiFormSchema),
     defaultValues: {
-      postcode: '532-0002',
-      address: '大阪府大阪市淀川区東三国6-17-25-805',
-      name: '板倉海',
-      phoneNumber: '08063638429',
+      postcode: '',
+      address: '',
+      name: '',
+      phoneNumber: '',
     },
   });
 
@@ -43,9 +43,6 @@ export const useKanjiForm = () => {
     e?.preventDefault();
 
     formMutation.mutate(kanjiFormData);
-
-    // フォームのリセット
-    kanjiForm.reset();
   };
 
   return { kanjiForm, onSubmit: kanjiForm.handleSubmit(onSubmit), romajiData };

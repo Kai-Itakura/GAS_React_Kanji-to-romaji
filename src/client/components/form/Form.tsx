@@ -6,6 +6,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const Form = () => {
   const { kanjiForm, onSubmit, romajiData } = useKanjiForm();
+  console.log('🚀 ~ Form ~ kanjiForm:', kanjiForm.getValues());
 
   const isTablet = useMediaQuery();
 
@@ -18,7 +19,10 @@ const Form = () => {
       {romajiData && (
         <>
           {isTablet ? <DoubleArrowDownIcon className='size-1/12' /> : <DoubleArrowRightIcon className='size-1/12' />}
-          <RomajiForm data={romajiData} />
+          <RomajiForm
+            romajiData={romajiData}
+            kanjiData={kanjiForm.getValues()}
+          />
         </>
       )}
     </div>
