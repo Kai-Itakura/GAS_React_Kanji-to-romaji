@@ -4,9 +4,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { HTMLInputTypeAttribute } from 'react';
 import { Button } from '@/components/ui/button';
+import { z } from 'zod';
+import { KanjiFormSchema } from '../utils/FormValidation';
+import { Textarea } from '@/components/ui/textarea';
 
 type KanjiFormProps = {
-  methods: UseFormReturn<KanjiFormType>;
+  kanjiForm: UseFormReturn<z.infer<typeof KanjiFormSchema>>;
   onSubmit: () => Promise<void>;
 };
 
@@ -16,7 +19,7 @@ type KanjiFormFields = {
   type?: HTMLInputTypeAttribute;
 };
 
-const KanjiForm = ({ methods, onSubmit }: KanjiFormProps) => {
+const KanjiForm = ({ kanjiForm, onSubmit }: KanjiFormProps) => {
   const kanjiFormFields: KanjiFormFields[] = [
     { name: 'postcode', label: '郵便番号' },
     { name: 'address', label: '住所' },
@@ -25,31 +28,43 @@ const KanjiForm = ({ methods, onSubmit }: KanjiFormProps) => {
   ];
 
   return (
-    <Form {...methods}>
+    <Form {...kanjiForm}>
       <form
         onSubmit={onSubmit}
-        className='h-fit w-1/2'
+        className='h-fit w-full max-w-2xl bg-slate-50 p-10 rounded-xl border  text-card-foreground shadow'
       >
         {kanjiFormFields.map(({ name, label, type }) => (
           <FormField
             key={name}
-            control={methods.control}
+            control={kanjiForm.control}
             name={name}
             render={({ field }) => (
-              <FormItem className='mb-8'>
+              <FormItem className='mb-7'>
                 <FormLabel className='text-left block'>{label}</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    type={type}
-                  />
+                  {name === 'address' ? (
+                    <Textarea
+                      {...field}
+                      wrap='soft'
+                    />
+                  ) : (
+                    <Input
+                      {...field}
+                      type={type}
+                    />
+                  )}
                 </FormControl>
                 <FormMessage className='text-left' />
               </FormItem>
             )}
           />
         ))}
-        <Button type='submit'>ローマ字に変換</Button>
+        <Button
+          disabled={!kanjiForm.formState.isValid}
+          type='submit'
+        >
+          ローマ字に変換
+        </Button>
       </form>
     </Form>
   );

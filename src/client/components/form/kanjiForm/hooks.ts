@@ -3,7 +3,7 @@ import * as main from '../../../../server/main';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KanjiFormSchema } from '../utils/FormValidation';
-import { KanjiFormType, RomajiFormType } from '../types/formTypes';
+import { KanjiFormType, RomajiDataType } from '../types/formTypes';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import * as z from 'zod';
@@ -13,10 +13,10 @@ type Server = typeof main;
 const { serverFunctions } = new GASClient<Server>();
 
 export const useKanjiForm = () => {
-  const [romajiData, setRomajiData] = useState<RomajiFormType>();
+  const [romajiData, setRomajiData] = useState<RomajiDataType>();
 
   const formMutation = useMutation({
-    mutationKey: ['romaji'],
+    mutationKey: ['kanji'],
     mutationFn: async (kanjiFromData: KanjiFormType) => {
       const data = await serverFunctions.convertKanjiToRomaji(kanjiFromData);
       return data;
@@ -27,25 +27,26 @@ export const useKanjiForm = () => {
   });
 
   // フォームメソッド
-  const methods = useForm<z.infer<typeof KanjiFormSchema>>({
+  const kanjiForm = useForm<z.infer<typeof KanjiFormSchema>>({
     mode: 'onChange',
     resolver: zodResolver(KanjiFormSchema),
     defaultValues: {
-      postcode: '',
-      address: '',
-      name: '',
-      phoneNumber: '',
+      postcode: '532-0002',
+      address: '大阪府大阪市淀川区東三国6-17-25-805',
+      name: '板倉海',
+      phoneNumber: '08063638429',
     },
   });
 
-  const onSubmit: SubmitHandler<KanjiFormType> = async (kanjiFormData, e) => {
+  // フォーム送信時の処理
+  const onSubmit: SubmitHandler<z.infer<typeof KanjiFormSchema>> = async (kanjiFormData, e) => {
     e?.preventDefault();
 
     formMutation.mutate(kanjiFormData);
 
     // フォームのリセット
-    methods.reset();
+    kanjiForm.reset();
   };
 
-  return { methods, onSubmit: methods.handleSubmit(onSubmit), romajiData };
+  return { kanjiForm, onSubmit: kanjiForm.handleSubmit(onSubmit), romajiData };
 };

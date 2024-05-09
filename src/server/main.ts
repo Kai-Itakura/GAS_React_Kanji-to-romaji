@@ -1,4 +1,4 @@
-import { KanjiFormType } from '../client/components/form/types/formTypes';
+import { KanjiFormType, RomajiFormType } from '../client/components/form/types/formTypes';
 
 type ExportsType = typeof import('./convertAddress') & typeof import('./convertName');
 
@@ -35,14 +35,22 @@ const convertKanjiToRomaji = (formData: KanjiFormType) => {
   const rPostcode = postcode.replace('-', '');
   const rAddress = exports.tokenizeAddress(address) as string;
   const rNames = exports.convertName(name) as string[];
-  const rPhoneNumber = phoneNumber.replace('0', '＋81');
+  const rPhoneNumber = phoneNumber.replace('0', '+81');
 
   return {
     rPostcode,
     rAddress,
-    rNames,
+    rName1: rNames[0],
+    rName2: rNames[1],
     rPhoneNumber,
   };
+};
+
+const createDocument = (formData: RomajiFormType) => {
+  console.log('🚀 ~ createDocument ~ formData:', formData);
+  const doc = DocumentApp.create('任意のタイトルに変更してください');
+  const docUrl = doc.getUrl();
+  return docUrl;
 };
 
 const setKnajiFormData = (formData: KanjiFormType) => {
@@ -84,4 +92,4 @@ const writeFormData = (formData: FormData) => {
   body.appendParagraph(phoneNumber);
 };
 
-export { convertKanjiToRomaji };
+export { convertKanjiToRomaji, createDocument };

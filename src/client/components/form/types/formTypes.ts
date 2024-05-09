@@ -5,15 +5,17 @@ export type KanjiFormType = {
   phoneNumber: string;
 };
 
-export type RomajiFormType = {
+export type RomajiDataType = {
   rPostcode: string;
   rAddress: string;
-  rNames: string[];
+  rName1: string;
+  rName2: string;
   rPhoneNumber: string;
 };
 
-export type FormData =
-  | KanjiFormType
-  | (RomajiFormType & {
-      converted: boolean;
-    });
+export type RomajiFormType = {
+  rPostcode: string;
+  rAddress: string;
+  rName: string;
+  rPhoneNumber: string;
+};

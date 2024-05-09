@@ -6,9 +6,12 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Form />
-    </QueryClientProvider>
+    <>
+      <h1 className='m-5 text-xl font-bold'>ローマ字変換フォーム</h1>
+      <QueryClientProvider client={queryClient}>
+        <Form />
+      </QueryClientProvider>
+    </>
   );
 }
 
