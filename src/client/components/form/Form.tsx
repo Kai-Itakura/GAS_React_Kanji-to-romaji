@@ -6,7 +6,6 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const Form = () => {
   const { kanjiForm, onSubmit, romajiData } = useKanjiForm();
-  console.log('🚀 ~ Form ~ kanjiForm:', kanjiForm.getValues());
 
   const isTablet = useMediaQuery();
 
