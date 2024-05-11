@@ -7,24 +7,29 @@ import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import { KanjiFormSchema } from '../utils/FormValidation';
 import { Textarea } from '@/components/ui/textarea';
+import FormButtonLayout from '@/components/layout/FormButtonLayout';
+import FormAlertDialog from '@/components/dialog/AltertDialog';
 
 type KanjiFormProps = {
   kanjiForm: UseFormReturn<z.infer<typeof KanjiFormSchema>>;
   onSubmit: () => Promise<void>;
+  disabled?: boolean;
+  buttonDisabled?: boolean;
 };
 
 type KanjiFormFields = {
   name: keyof KanjiFormType;
   label: '郵便番号' | '住所' | '名前' | '電話番号';
   type?: HTMLInputTypeAttribute;
+  disabled?: boolean;
 };
 
-const KanjiForm = ({ kanjiForm, onSubmit }: KanjiFormProps) => {
+const KanjiForm = ({ kanjiForm, onSubmit, disabled, buttonDisabled }: KanjiFormProps) => {
   const kanjiFormFields: KanjiFormFields[] = [
-    { name: 'postcode', label: '郵便番号' },
-    { name: 'address', label: '住所' },
-    { name: 'name', label: '名前' },
-    { name: 'phoneNumber', label: '電話番号', type: 'tel' },
+    { name: 'postcode', label: '郵便番号', disabled: disabled },
+    { name: 'address', label: '住所', disabled: disabled },
+    { name: 'name', label: '名前', disabled: disabled },
+    { name: 'phoneNumber', label: '電話番号', type: 'tel', disabled: disabled },
   ];
 
   return (
@@ -46,11 +51,13 @@ const KanjiForm = ({ kanjiForm, onSubmit }: KanjiFormProps) => {
                     <Textarea
                       {...field}
                       wrap='soft'
+                      disabled={disabled}
                     />
                   ) : (
                     <Input
                       {...field}
                       type={type}
+                      disabled={disabled}
                     />
                   )}
                 </FormControl>
@@ -59,12 +66,22 @@ const KanjiForm = ({ kanjiForm, onSubmit }: KanjiFormProps) => {
             )}
           />
         ))}
-        <Button
-          disabled={!kanjiForm.formState.isValid}
-          type='submit'
-        >
-          ローマ字に変換
-        </Button>
+        <FormButtonLayout>
+          <FormAlertDialog
+            buttonText='リセット'
+            title='フォームをリセットしますか？'
+            clickHandler={() => {
+              kanjiForm.reset();
+            }}
+            buttonDisabled={disabled || buttonDisabled}
+          />
+          <Button
+            disabled={!kanjiForm.formState.isValid || disabled || buttonDisabled}
+            type='submit'
+          >
+            ローマ字に変換
+          </Button>
+        </FormButtonLayout>
       </form>
     </Form>
   );

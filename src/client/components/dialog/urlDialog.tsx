@@ -9,17 +9,24 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
+import { useKanjiStore, useRomajiStore } from '../form/store/store';
 
-type DialogProps = {
+type UrlDialogProps = {
   title: string;
   body: string;
+  reset: () => void;
 };
 
-const Dialog = ({ title, body }: DialogProps) => {
+const UrlDialog = ({ title, body, reset }: UrlDialogProps) => {
   const [isOpen, setIsOpen] = useState(true);
 
-  const closeDialog = () => setIsOpen(false);
-  const onActionClick = () => {
+  const setKanjiData = useKanjiStore((state) => state.setKanjiData);
+  const setRomajiData = useRomajiStore((state) => state.setRomajiData);
+
+  const handleClick = () => {
+    setKanjiData(undefined);
+    setRomajiData(undefined);
+    reset();
     setIsOpen(false);
   };
 
@@ -34,9 +41,9 @@ const Dialog = ({ title, body }: DialogProps) => {
           <AlertDialogDescription className='break-words'>{body}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={closeDialog}>いいえ</AlertDialogCancel>
+          <AlertDialogCancel onClick={handleClick}>いいえ</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onActionClick}
+            onClick={handleClick}
             className='p-0'
           >
             <a
@@ -54,4 +61,4 @@ const Dialog = ({ title, body }: DialogProps) => {
   );
 };
 
-export default Dialog;
+export default UrlDialog;
