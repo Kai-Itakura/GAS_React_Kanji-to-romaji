@@ -2,10 +2,14 @@ import { z } from 'zod';
 
 const POST_CODE = new RegExp('^\\d{3}-?\\d{4}$');
 const PHONE_NUMBER = new RegExp('^\\d+$');
+const ADDRESS_REGEX = new RegExp('^.*(\\d+[-\\d]*)$');
 
 export const KanjiFormSchema = z.object({
   postcode: z.string().min(1, '郵便番号は必須です').regex(POST_CODE, '半角数字で入力してください'),
-  address: z.string().min(1, '住所は必須です'),
+  address: z
+    .string()
+    .min(1, '住所は必須です')
+    .regex(ADDRESS_REGEX, '番地以降はハイフンと半角数字で入力してください　例：1-6-19-904'),
   name: z
     .string()
     .min(1, '名前は必須です')
@@ -36,7 +40,7 @@ export const romajiFormSchema = z
     rPhoneNumber: z
       .string()
       .min(1, '電話番号は必須です')
-      .regex(ROMAJI_PHONE_NUMBER, '電話番号の形式が無効です。国際形式で入力してください。例: +811234567890'),
+      .regex(ROMAJI_PHONE_NUMBER, '電話番号の形式が無効です。国際形式で入力してください　例: +811234567890'),
   })
   .superRefine((val, ctx) => {
     if (val.selectName === 'rName1' && !val.rName1) {
