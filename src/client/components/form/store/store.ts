@@ -1,35 +1,46 @@
 import { KanjiFormType, RomajiDataType } from '@/components/form/types/formTypes';
-import { create, StateCreator } from 'zustand';
+import { create } from 'zustand';
 
 type KanjiStore = {
   kanjiData: KanjiFormType | undefined;
+  buttonDisabled: boolean;
   setKanjiData: (value: KanjiFormType | undefined) => void;
+  setButtonDisabled: (value: boolean) => void;
 };
 
 type RomajiStore = {
   romajiData: RomajiDataType | undefined;
+  buttonDisabled: boolean;
   setRomajiData: (value: RomajiDataType | undefined) => void;
+  setButtonDisabled: (value: boolean) => void;
 };
 
-const createKanjiDataStore: StateCreator<KanjiStore> = (set) => ({
+export const useKanjiStore = create<KanjiStore>((set) => ({
   kanjiData: undefined,
+  buttonDisabled: false,
   setKanjiData: (value) => {
     set(() => {
       return { kanjiData: value };
     });
   },
-});
+  setButtonDisabled: (value) => {
+    set(() => {
+      return { buttonDisabled: value };
+    });
+  },
+}));
 
-const createRomajiData: StateCreator<RomajiStore> = (set) => ({
+export const useRomajiStore = create<RomajiStore>((set) => ({
   romajiData: undefined,
+  buttonDisabled: false,
   setRomajiData: (value) => {
     set(() => {
       return { romajiData: value };
     });
   },
-});
-
-export const useStore = create<KanjiStore & RomajiStore>((...a) => ({
-  ...createKanjiDataStore(...a),
-  ...createRomajiData(...a),
+  setButtonDisabled: (value) => {
+    set(() => {
+      return { buttonDisabled: value };
+    });
+  },
 }));

@@ -6,7 +6,7 @@ import { KanjiFormSchema } from '../utils/FormValidation';
 import { KanjiFormType } from '../types/formTypes';
 import { useMutation } from '@tanstack/react-query';
 import * as z from 'zod';
-import { useStore } from '../store/store';
+import { useKanjiStore, useRomajiStore } from '../store/store';
 import { useShallow } from 'zustand/react/shallow';
 
 type Server = typeof main;
@@ -14,9 +14,16 @@ type Server = typeof main;
 const { serverFunctions } = new GASClient<Server>();
 
 export const useKanjiForm = () => {
-  const { setKanjiData, romajiData, setRomajiData } = useStore(
+  const { setKanjiData, buttonDisabled, setButtonDisabled } = useKanjiStore(
     useShallow((state) => ({
       setKanjiData: state.setKanjiData,
+      buttonDisabled: state.buttonDisabled,
+      setButtonDisabled: state.setButtonDisabled,
+    }))
+  );
+
+  const { romajiData, setRomajiData } = useRomajiStore(
+    useShallow((state) => ({
       romajiData: state.romajiData,
       setRomajiData: state.setRomajiData,
     }))
@@ -53,5 +60,7 @@ export const useKanjiForm = () => {
     formMutation.mutate(kanjiFormData);
   };
 
-  return { kanjiForm, onSubmit: kanjiForm.handleSubmit(onSubmit), romajiData };
+  setButtonDisabled(formMutation.isPending);
+
+  return { kanjiForm, onSubmit: kanjiForm.handleSubmit(onSubmit), romajiData, buttonDisabled };
 };

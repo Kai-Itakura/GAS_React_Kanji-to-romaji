@@ -9,18 +9,20 @@ import { SelectValue } from '@radix-ui/react-select';
 import { selectContents } from '../utils/FormValidation';
 import { Textarea } from '@/components/ui/textarea';
 import UrlDialog from '@/components/dialog/urlDialog';
-import { useStore } from '../store/store';
+import { useRomajiStore } from '../store/store';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
+import FormAlertDialog from '@/components/dialog/AltertDialog';
 
 type RomajiFormProps = {
   romajiData: RomajiDataType;
   kanjiData: KanjiFormType;
+  reset: () => void;
 };
 
-const RomajiForm = ({ romajiData, kanjiData }: RomajiFormProps) => {
-  const setRomajiData = useStore((state) => state.setRomajiData);
+const RomajiForm = ({ romajiData, kanjiData, reset }: RomajiFormProps) => {
+  const setRomajiData = useRomajiStore((state) => state.setRomajiData);
 
-  const { romajiForm, onSubmit, url } = useRomajiForm(romajiData, kanjiData);
+  const { romajiForm, onSubmit, url, buttonDisabled } = useRomajiForm(romajiData, kanjiData, reset);
   const { control, trigger, watch, formState } = romajiForm;
 
   // フォーム内のセレクトでzodのバリデーションをトリガーするための処理
@@ -149,9 +151,14 @@ const RomajiForm = ({ romajiData, kanjiData }: RomajiFormProps) => {
             )}
           />
           <FormButtonLayout>
-            <Button onClick={() => setRomajiData(undefined)}>戻る</Button>
+            <FormAlertDialog
+              buttonText='戻る'
+              title='日本語のフォームに戻りますか？'
+              clickHandler={() => setRomajiData(undefined)}
+              buttonDisabled={buttonDisabled}
+            />
             <Button
-              disabled={!formState.isValid}
+              disabled={!formState.isValid || buttonDisabled}
               type='submit'
             >
               Google Documentを作成
@@ -163,6 +170,7 @@ const RomajiForm = ({ romajiData, kanjiData }: RomajiFormProps) => {
         <UrlDialog
           title='作成したドキュメントを開きますか？'
           body={url}
+          reset={reset}
         />
       )}
     </>
