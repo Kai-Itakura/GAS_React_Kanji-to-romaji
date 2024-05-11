@@ -3,17 +3,24 @@ import * as main from '../../../../server/main';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KanjiFormSchema } from '../utils/FormValidation';
-import { KanjiFormType, RomajiDataType } from '../types/formTypes';
+import { KanjiFormType } from '../types/formTypes';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
 import * as z from 'zod';
+import { useStore } from '../store/store';
+import { useShallow } from 'zustand/react/shallow';
 
 type Server = typeof main;
 
 const { serverFunctions } = new GASClient<Server>();
 
 export const useKanjiForm = () => {
-  const [romajiData, setRomajiData] = useState<RomajiDataType>();
+  const { setKanjiData, romajiData, setRomajiData } = useStore(
+    useShallow((state) => ({
+      setKanjiData: state.setKanjiData,
+      romajiData: state.romajiData,
+      setRomajiData: state.setRomajiData,
+    }))
+  );
 
   const formMutation = useMutation({
     mutationKey: ['kanji'],
@@ -33,7 +40,7 @@ export const useKanjiForm = () => {
     defaultValues: {
       postcode: '532-0002',
       address: '大阪府大阪市淀川区東三国6-17-25-805',
-      name: '板倉海',
+      name: '',
       phoneNumber: '08063638429',
     },
   });
@@ -42,6 +49,7 @@ export const useKanjiForm = () => {
   const onSubmit: SubmitHandler<z.infer<typeof KanjiFormSchema>> = async (kanjiFormData, e) => {
     e?.preventDefault();
 
+    setKanjiData(kanjiFormData);
     formMutation.mutate(kanjiFormData);
   };
 
