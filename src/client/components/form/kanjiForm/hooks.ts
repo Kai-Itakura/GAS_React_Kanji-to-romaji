@@ -14,14 +14,7 @@ type Server = typeof main;
 const { serverFunctions } = new GASClient<Server>();
 
 export const useKanjiForm = () => {
-  const { setKanjiData, buttonDisabled, setButtonDisabled } = useKanjiStore(
-    useShallow((state) => ({
-      setKanjiData: state.setKanjiData,
-      buttonDisabled: state.buttonDisabled,
-      setButtonDisabled: state.setButtonDisabled,
-    }))
-  );
-
+  const setKanjiData = useKanjiStore((state) => state.setKanjiData);
   const { romajiData, setRomajiData } = useRomajiStore(
     useShallow((state) => ({
       romajiData: state.romajiData,
@@ -45,8 +38,8 @@ export const useKanjiForm = () => {
     mode: 'onChange',
     resolver: zodResolver(KanjiFormSchema),
     defaultValues: {
-      postcode: '532-0002',
-      address: '大阪府大阪市淀川区東三国6-17-25-805',
+      postcode: '',
+      address: '',
       name: '',
       phoneNumber: '08063638429',
     },
@@ -60,7 +53,5 @@ export const useKanjiForm = () => {
     formMutation.mutate(kanjiFormData);
   };
 
-  setButtonDisabled(formMutation.isPending);
-
-  return { kanjiForm, onSubmit: kanjiForm.handleSubmit(onSubmit), romajiData, buttonDisabled };
+  return { kanjiForm, onSubmit: kanjiForm.handleSubmit(onSubmit), romajiData, isPending: formMutation.isPending };
 };

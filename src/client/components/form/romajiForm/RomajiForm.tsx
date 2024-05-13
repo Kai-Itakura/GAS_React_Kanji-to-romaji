@@ -3,7 +3,6 @@ import { useRomajiForm } from './hooks';
 import { useEffect, useRef } from 'react';
 import { KanjiFormType, RomajiDataType } from '../types/formTypes';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
 import { selectContents } from '../utils/FormValidation';
@@ -12,6 +11,7 @@ import UrlDialog from '@/components/dialog/urlDialog';
 import { useRomajiStore } from '../store/store';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
 import FormAlertDialog from '@/components/dialog/AltertDialog';
+import { LoadingButton } from '@/components/ui/loadingButton';
 
 type RomajiFormProps = {
   romajiData: RomajiDataType;
@@ -22,8 +22,8 @@ type RomajiFormProps = {
 const RomajiForm = ({ romajiData, kanjiData, reset }: RomajiFormProps) => {
   const setRomajiData = useRomajiStore((state) => state.setRomajiData);
 
-  const { romajiForm, onSubmit, url, buttonDisabled } = useRomajiForm(romajiData, kanjiData, reset);
-  const { control, trigger, watch, formState } = romajiForm;
+  const { romajiForm, onSubmit, url, isPending } = useRomajiForm(romajiData, kanjiData, reset);
+  const { control, trigger, watch } = romajiForm;
 
   // フォーム内のセレクトでzodのバリデーションをトリガーするための処理
   useEffect(() => {
@@ -155,14 +155,14 @@ const RomajiForm = ({ romajiData, kanjiData, reset }: RomajiFormProps) => {
               buttonText='戻る'
               title='日本語のフォームに戻りますか？'
               clickHandler={() => setRomajiData(undefined)}
-              buttonDisabled={buttonDisabled}
+              buttonDisabled={isPending}
             />
-            <Button
-              disabled={!formState.isValid || buttonDisabled}
+            <LoadingButton
               type='submit'
+              loading={isPending}
             >
-              Google Documentを作成
-            </Button>
+              {isPending ? 'ドキュメントを作成中' : 'Google Docsを作成'}
+            </LoadingButton>
           </FormButtonLayout>
         </form>
       </Form>

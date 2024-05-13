@@ -8,7 +8,6 @@ import { useMutation } from '@tanstack/react-query';
 import { KanjiFormType, RomajiDataType, RomajiFormType } from '../types/formTypes';
 import { useState } from 'react';
 import { useKanjiStore, useRomajiStore } from '../store/store';
-import { useShallow } from 'zustand/react/shallow';
 
 type Server = typeof main;
 
@@ -28,13 +27,7 @@ export const useRomajiForm = (
 
   const setKanjiData = useKanjiStore((state) => state.setKanjiData);
 
-  const { setRomajiData, buttonDisabled, setRomajiButtonDisabled } = useRomajiStore(
-    useShallow((state) => ({
-      setRomajiData: state.setRomajiData,
-      buttonDisabled: state.buttonDisabled,
-      setRomajiButtonDisabled: state.setButtonDisabled,
-    }))
-  );
+  const setRomajiData = useRomajiStore((state) => state.setRomajiData);
 
   const formMutation = useMutation({
     mutationKey: ['romaji'],
@@ -54,8 +47,6 @@ export const useRomajiForm = (
       }
     },
   });
-
-  setRomajiButtonDisabled(formMutation.isPending);
 
   // フォームメソッド
   const romajiForm = useForm<z.infer<typeof romajiFormSchema>>({
@@ -90,5 +81,5 @@ export const useRomajiForm = (
     romajiForm.reset();
   };
 
-  return { romajiForm, onSubmit: romajiForm.handleSubmit(onSubmit), url, buttonDisabled };
+  return { romajiForm, onSubmit: romajiForm.handleSubmit(onSubmit), url, isPending: formMutation.isPending };
 };

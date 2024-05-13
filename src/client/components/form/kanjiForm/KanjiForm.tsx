@@ -3,18 +3,19 @@ import { KanjiFormType } from '../types/formTypes';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { HTMLInputTypeAttribute } from 'react';
-import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import { KanjiFormSchema } from '../utils/FormValidation';
 import { Textarea } from '@/components/ui/textarea';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
 import FormAlertDialog from '@/components/dialog/AltertDialog';
+import { LoadingButton } from '@/components/ui/loadingButton';
+// import { useFetch } from '@/api/fetch';
 
 type KanjiFormProps = {
   kanjiForm: UseFormReturn<z.infer<typeof KanjiFormSchema>>;
   onSubmit: () => Promise<void>;
   disabled?: boolean;
-  buttonDisabled?: boolean;
+  isPending?: boolean;
 };
 
 type KanjiFormFields = {
@@ -24,13 +25,21 @@ type KanjiFormFields = {
   disabled?: boolean;
 };
 
-const KanjiForm = ({ kanjiForm, onSubmit, disabled, buttonDisabled }: KanjiFormProps) => {
+const KanjiForm = ({ kanjiForm, onSubmit, disabled, isPending }: KanjiFormProps) => {
   const kanjiFormFields: KanjiFormFields[] = [
     { name: 'postcode', label: '郵便番号', disabled: disabled },
     { name: 'address', label: '住所', disabled: disabled },
     { name: 'name', label: '名前', disabled: disabled },
     { name: 'phoneNumber', label: '電話番号', type: 'tel', disabled: disabled },
   ];
+
+  const { success, data, error } = KanjiFormSchema.shape.postcode.safeParse(kanjiForm.getValues('postcode'));
+
+  if (success) {
+    console.log(data);
+  } else {
+    console.log(error);
+  }
 
   return (
     <Form {...kanjiForm}>
@@ -73,14 +82,15 @@ const KanjiForm = ({ kanjiForm, onSubmit, disabled, buttonDisabled }: KanjiFormP
             clickHandler={() => {
               kanjiForm.reset();
             }}
-            buttonDisabled={disabled || buttonDisabled}
+            buttonDisabled={disabled || isPending}
           />
-          <Button
-            disabled={!kanjiForm.formState.isValid || disabled || buttonDisabled}
+          <LoadingButton
             type='submit'
+            loading={isPending}
+            disabled={disabled}
           >
-            ローマ字に変換
-          </Button>
+            {isPending ? 'ローマ字に変換中' : 'ローマ字に変換'}
+          </LoadingButton>
         </FormButtonLayout>
       </form>
     </Form>

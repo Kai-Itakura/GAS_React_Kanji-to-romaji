@@ -5,7 +5,7 @@ import RomajiForm from './romajiForm/RomajiForm';
 import { useMediaQuery } from '@/hooks/mediaQuery.hooks';
 
 const Form = () => {
-  const { kanjiForm, onSubmit, romajiData, buttonDisabled } = useKanjiForm();
+  const { kanjiForm, onSubmit, romajiData, isPending } = useKanjiForm();
 
   const isTablet = useMediaQuery();
 
@@ -31,7 +31,7 @@ const Form = () => {
     <KanjiForm
       kanjiForm={kanjiForm}
       onSubmit={onSubmit}
-      buttonDisabled={buttonDisabled}
+      isPending={isPending}
     />
   );
 };
