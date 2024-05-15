@@ -1,7 +1,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useRomajiForm } from './hooks';
 import { useEffect, useRef } from 'react';
-import { KanjiFormType, RomajiDataType } from '../types/formTypes';
+import { RomajiDataType } from '../types/formTypes';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
@@ -12,17 +12,18 @@ import { useRomajiStore } from '../store/store';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
 import FormAlertDialog from '@/components/dialog/AltertDialog';
 import { LoadingButton } from '@/components/ui/loadingButton';
+import { useKanjiForm } from '../kanjiForm/hooks';
 
 type RomajiFormProps = {
   romajiData: RomajiDataType;
-  kanjiData: KanjiFormType;
-  reset: () => void;
 };
 
-const RomajiForm = ({ romajiData, kanjiData, reset }: RomajiFormProps) => {
+const RomajiForm = ({ romajiData }: RomajiFormProps) => {
   const setRomajiData = useRomajiStore((state) => state.setRomajiData);
 
-  const { romajiForm, onSubmit, url, isPending } = useRomajiForm(romajiData, kanjiData, reset);
+  const { kanjiForm } = useKanjiForm();
+
+  const { romajiForm, onSubmit, url, isPending } = useRomajiForm(romajiData, kanjiForm.reset);
   const { control, trigger, watch } = romajiForm;
 
   // フォーム内のセレクトでzodのバリデーションをトリガーするための処理
@@ -170,7 +171,7 @@ const RomajiForm = ({ romajiData, kanjiData, reset }: RomajiFormProps) => {
         <UrlDialog
           title='作成したドキュメントを開きますか？'
           body={url}
-          reset={reset}
+          reset={kanjiForm.reset}
         />
       )}
     </>
