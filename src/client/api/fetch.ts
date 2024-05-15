@@ -1,21 +1,32 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+
+type GetPostCodeResult = {
+  message: string;
+  status: number;
+  results: {
+    address1: string;
+    address2: string;
+    address3: string;
+    kana1: string;
+    kana2: string;
+    kana3: string;
+    prefcode: string;
+    zipcode: string;
+  }[];
+};
 
 const BASE_URL = import.meta.env.VITE_ZIPCLOUD_URL;
 
-export const useFetch = <T>(query: T) => {
-  const { data, isSuccess, isError, error } = useQuery({
-    queryKey: ['zipcloud', query],
-    queryFn: async () => {
+export const useGetPostcode = <T>() => {
+  const mutationReturn = useMutation({
+    mutationKey: ['zipcloud'],
+    mutationFn: async (query: T): Promise<string> => {
       const res = await fetch(BASE_URL + query);
-      const result = await res.json();
-      return result;
+      const result: GetPostCodeResult = await res.json();
+      const { address1, address2, address3 } = result.results[0];
+      return address1 + address2 + address3;
     },
-    enabled: false,
   });
 
-  if (isSuccess) {
-    console.log('success: ', data);
-  } else if (isError) {
-    console.error('error: ', error);
-  }
+  return mutationReturn;
 };

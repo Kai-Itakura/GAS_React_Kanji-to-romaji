@@ -1,39 +1,25 @@
 import { DoubleArrowDownIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
-import { useKanjiForm } from './kanjiForm/hooks';
 import KanjiForm from './kanjiForm/KanjiForm';
 import RomajiForm from './romajiForm/RomajiForm';
 import { useMediaQuery } from '@/hooks/mediaQuery.hooks';
+import { useRomajiStore } from './store/store';
 
 const Form = () => {
-  const { kanjiForm, onSubmit, romajiData, isPending } = useKanjiForm();
+  const romajiData = useRomajiStore((state) => state.romajiData);
 
   const isTablet = useMediaQuery();
 
   if (romajiData) {
     return (
       <>
-        <KanjiForm
-          kanjiForm={kanjiForm}
-          onSubmit={onSubmit}
-          disabled
-        />
+        <KanjiForm disabled />
         {isTablet ? <DoubleArrowDownIcon className='size-1/12' /> : <DoubleArrowRightIcon className='size-1/12' />}
-        <RomajiForm
-          romajiData={romajiData}
-          kanjiData={kanjiForm.getValues()}
-          reset={kanjiForm.reset}
-        />
+        <RomajiForm romajiData={romajiData} />
       </>
     );
   }
 
-  return (
-    <KanjiForm
-      kanjiForm={kanjiForm}
-      onSubmit={onSubmit}
-      isPending={isPending}
-    />
-  );
+  return <KanjiForm />;
 };
 
 export default Form;

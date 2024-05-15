@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { KanjiFormType, RomajiDataType, RomajiFormType } from '../types/formTypes';
 import { useState } from 'react';
 import { useKanjiStore, useRomajiStore } from '../store/store';
+import { useShallow } from 'zustand/react/shallow';
 
 type Server = typeof main;
 
@@ -20,12 +21,16 @@ const { serverFunctions } = new GASClient<Server>();
 
 export const useRomajiForm = (
   { rPostcode, rAddress, rName1, rName2, rPhoneNumber }: RomajiDataType,
-  kanjiData: KanjiFormType,
   reset: () => void
 ) => {
   const [url, setUrl] = useState('');
 
-  const setKanjiData = useKanjiStore((state) => state.setKanjiData);
+  const { kanjiData, setKanjiData } = useKanjiStore(
+    useShallow((state) => ({
+      kanjiData: state.kanjiData!,
+      setKanjiData: state.setKanjiData,
+    }))
+  );
 
   const setRomajiData = useRomajiStore((state) => state.setRomajiData);
 
