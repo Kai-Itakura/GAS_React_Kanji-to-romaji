@@ -1,17 +1,21 @@
 import { KanjiFormType } from '../types/formTypes';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import React, { HTMLInputTypeAttribute, useEffect } from 'react';
+import React, { BaseSyntheticEvent, HTMLInputTypeAttribute, useEffect } from 'react';
 import { KanjiFormSchema } from '../utils/FormValidation';
 import { Textarea } from '@/components/ui/textarea';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
 import FormAlertDialog from '@/components/dialog/AltertDialog';
 import { LoadingButton } from '@/components/ui/loadingButton';
-import { useKanjiForm } from './hooks';
 import { useGetPostcode } from '@/api/fetch';
+import { UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
 type KanjiFormProps = {
   disabled?: boolean;
+  kanjiForm: UseFormReturn<z.infer<typeof KanjiFormSchema>>;
+  onSubmit: (e: BaseSyntheticEvent) => Promise<void>;
+  isPending: boolean;
 };
 
 type KanjiFormFields = {
@@ -21,7 +25,7 @@ type KanjiFormFields = {
   disabled?: boolean;
 };
 
-const KanjiForm = ({ disabled }: KanjiFormProps) => {
+const KanjiForm = ({ disabled, kanjiForm, onSubmit, isPending }: KanjiFormProps) => {
   const kanjiFormFields: KanjiFormFields[] = [
     { name: 'postcode', label: '郵便番号', disabled: disabled },
     { name: 'address', label: '住所', disabled: disabled },
@@ -29,11 +33,9 @@ const KanjiForm = ({ disabled }: KanjiFormProps) => {
     { name: 'phoneNumber', label: '電話番号', type: 'tel', disabled: disabled },
   ];
 
-  const { kanjiForm, onSubmit, isPending } = useKanjiForm();
-
   const { success, data } = KanjiFormSchema.shape.postcode.safeParse(kanjiForm.getValues('postcode'));
 
-  const { mutate, data: addressData, isSuccess } = useGetPostcode();
+  const { mutate, data: addressData, isSuccess, isPending: isGetPostcodePending } = useGetPostcode();
 
   const handleSearchButtonClick = (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
@@ -42,9 +44,10 @@ const KanjiForm = ({ disabled }: KanjiFormProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      kanjiForm.setValue('address', addressData);
+      kanjiForm.setValue('address', addressData, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
     }
-  }, [addressData, data, isSuccess, kanjiForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressData, isSuccess]);
 
   return (
     <>
@@ -66,10 +69,11 @@ const KanjiForm = ({ disabled }: KanjiFormProps) => {
                       variant='outline'
                       size='sm'
                       className='ml-3'
-                      disabled={!success}
+                      disabled={!success || isPending || disabled}
+                      loading={isGetPostcodePending}
                       onClick={handleSearchButtonClick}
                     >
-                      住所を検索
+                      {isGetPostcodePending ? '住所を検索中' : '住所を検索'}
                     </LoadingButton>
                   ) : null}
                   <FormControl>
@@ -77,14 +81,14 @@ const KanjiForm = ({ disabled }: KanjiFormProps) => {
                       <Textarea
                         {...field}
                         wrap='soft'
-                        disabled={disabled}
+                        disabled={disabled || isPending}
                       />
                     ) : (
                       <>
                         <Input
                           {...field}
                           type={type}
-                          disabled={disabled}
+                          disabled={disabled || isPending}
                         />
                       </>
                     )}
@@ -106,7 +110,7 @@ const KanjiForm = ({ disabled }: KanjiFormProps) => {
             <LoadingButton
               type='submit'
               loading={isPending}
-              disabled={disabled}
+              disabled={disabled || isPending}
             >
               {isPending ? 'ローマ字に変換中' : 'ローマ字に変換'}
             </LoadingButton>

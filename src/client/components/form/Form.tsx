@@ -3,8 +3,11 @@ import KanjiForm from './kanjiForm/KanjiForm';
 import RomajiForm from './romajiForm/RomajiForm';
 import { useMediaQuery } from '@/hooks/mediaQuery.hooks';
 import { useRomajiStore } from './store/store';
+import { useKanjiForm } from './kanjiForm/hooks';
 
 const Form = () => {
+  const { kanjiForm, onSubmit, isPending } = useKanjiForm();
+
   const romajiData = useRomajiStore((state) => state.romajiData);
 
   const isTablet = useMediaQuery();
@@ -12,14 +15,28 @@ const Form = () => {
   if (romajiData) {
     return (
       <>
-        <KanjiForm disabled />
+        <KanjiForm
+          disabled
+          onSubmit={onSubmit}
+          isPending={isPending}
+          kanjiForm={kanjiForm}
+        />
         {isTablet ? <DoubleArrowDownIcon className='size-1/12' /> : <DoubleArrowRightIcon className='size-1/12' />}
-        <RomajiForm romajiData={romajiData} />
+        <RomajiForm
+          romajiData={romajiData}
+          reset={kanjiForm.reset}
+        />
       </>
     );
   }
 
-  return <KanjiForm />;
+  return (
+    <KanjiForm
+      onSubmit={onSubmit}
+      isPending={isPending}
+      kanjiForm={kanjiForm}
+    />
+  );
 };
 
 export default Form;

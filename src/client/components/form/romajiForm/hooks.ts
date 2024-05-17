@@ -1,8 +1,8 @@
 import { GASClient } from 'gas-client';
 import * as main from '../../../../server/main';
 import { z } from 'zod';
-import { romajiFormSchema } from '../utils/FormValidation';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { KanjiFormSchema, romajiFormSchema } from '../utils/FormValidation';
+import { SubmitHandler, UseFormReset, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { KanjiFormType, RomajiDataType, RomajiFormType } from '../types/formTypes';
@@ -21,7 +21,7 @@ const { serverFunctions } = new GASClient<Server>();
 
 export const useRomajiForm = (
   { rPostcode, rAddress, rName1, rName2, rPhoneNumber }: RomajiDataType,
-  reset: () => void
+  reset: UseFormReset<z.infer<typeof KanjiFormSchema>>
 ) => {
   const [url, setUrl] = useState('');
 
@@ -50,6 +50,7 @@ export const useRomajiForm = (
         setKanjiData(undefined);
         reset();
       }
+      setUrl(data);
     },
   });
 
