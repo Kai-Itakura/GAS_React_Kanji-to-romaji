@@ -44,74 +44,76 @@ const KanjiForm = ({ disabled }: KanjiFormProps) => {
     if (isSuccess) {
       kanjiForm.setValue('address', addressData);
     }
-  }, [addressData, isSuccess, kanjiForm]);
+  }, [addressData, data, isSuccess, kanjiForm]);
 
   return (
-    <Form {...kanjiForm}>
-      <form
-        onSubmit={onSubmit}
-        className='h-fit w-full max-w-2xl bg-slate-50 p-10 rounded-xl border  text-card-foreground shadow'
-      >
-        {kanjiFormFields.map(({ name, label, type }) => (
-          <FormField
-            key={name}
-            control={kanjiForm.control}
-            name={name}
-            render={({ field }) => (
-              <FormItem className='mb-7 text-left'>
-                <FormLabel className='text-left'>{label}</FormLabel>
-                {name === 'postcode' ? (
-                  <LoadingButton
-                    variant='outline'
-                    size='sm'
-                    className='ml-3'
-                    disabled={!success}
-                    onClick={handleSearchButtonClick}
-                  >
-                    住所を検索
-                  </LoadingButton>
-                ) : null}
-                <FormControl>
-                  {name === 'address' ? (
-                    <Textarea
-                      {...field}
-                      wrap='soft'
-                      disabled={disabled}
-                    />
-                  ) : (
-                    <>
-                      <Input
+    <>
+      <Form {...kanjiForm}>
+        <form
+          onSubmit={onSubmit}
+          className='h-fit w-full max-w-2xl bg-slate-50 p-10 rounded-xl border  text-card-foreground shadow'
+        >
+          {kanjiFormFields.map(({ name, label, type }) => (
+            <FormField
+              key={name}
+              control={kanjiForm.control}
+              name={name}
+              render={({ field }) => (
+                <FormItem className='mb-7 text-left'>
+                  <FormLabel className='text-left'>{label}</FormLabel>
+                  {name === 'postcode' ? (
+                    <LoadingButton
+                      variant='outline'
+                      size='sm'
+                      className='ml-3'
+                      disabled={!success}
+                      onClick={handleSearchButtonClick}
+                    >
+                      住所を検索
+                    </LoadingButton>
+                  ) : null}
+                  <FormControl>
+                    {name === 'address' ? (
+                      <Textarea
                         {...field}
-                        type={type}
+                        wrap='soft'
                         disabled={disabled}
                       />
-                    </>
-                  )}
-                </FormControl>
-                <FormMessage className='text-left' />
-              </FormItem>
-            )}
-          />
-        ))}
-        <FormButtonLayout>
-          <FormAlertDialog
-            buttonText='リセット'
-            title='フォームをリセットしますか？'
-            clickHandler={() => {
-              kanjiForm.reset();
-            }}
-            buttonDisabled={disabled || isPending}
-          />
-          <LoadingButton
-            type='submit'
-            loading={isPending}
-            disabled={disabled}
-          >
-            {isPending ? 'ローマ字に変換中' : 'ローマ字に変換'}
-          </LoadingButton>
-        </FormButtonLayout>
-      </form>
-    </Form>
+                    ) : (
+                      <>
+                        <Input
+                          {...field}
+                          type={type}
+                          disabled={disabled}
+                        />
+                      </>
+                    )}
+                  </FormControl>
+                  <FormMessage className='text-left' />
+                </FormItem>
+              )}
+            />
+          ))}
+          <FormButtonLayout>
+            <FormAlertDialog
+              buttonText='リセット'
+              title='フォームをリセットしますか？'
+              clickHandler={() => {
+                kanjiForm.reset();
+              }}
+              buttonDisabled={disabled || isPending}
+            />
+            <LoadingButton
+              type='submit'
+              loading={isPending}
+              disabled={disabled}
+            >
+              {isPending ? 'ローマ字に変換中' : 'ローマ字に変換'}
+            </LoadingButton>
+          </FormButtonLayout>
+        </form>
+      </Form>
+    </>
   );
 };
 

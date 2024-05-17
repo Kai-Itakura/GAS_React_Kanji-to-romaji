@@ -1,3 +1,5 @@
+import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 
 type GetPostCodeResult = {
@@ -18,13 +20,23 @@ type GetPostCodeResult = {
 const BASE_URL = import.meta.env.VITE_ZIPCLOUD_URL;
 
 export const useGetPostcode = <T>() => {
+  const { toast } = useToast();
+
   const mutationReturn = useMutation({
     mutationKey: ['zipcloud'],
     mutationFn: async (query: T): Promise<string> => {
-      const res = await fetch(BASE_URL + query);
-      const result: GetPostCodeResult = await res.json();
-      const { address1, address2, address3 } = result.results[0];
-      return address1 + address2 + address3;
+      try {
+        const res = await fetch(BASE_URL + query);
+        const result: GetPostCodeResult = await res.json();
+        const { address1, address2, address3 } = result.results[0];
+        return address1 + address2 + address3;
+      } catch (error) {
+        throw new Error('住所が見つかりませんでした');
+      }
+    },
+    onError: (error) => {
+      console.log('🚀 ~ useGetPostcode ~ error:', error);
+      toast({ description: error.message, variant: 'textRed', className: cn('right-0') });
     },
   });
 
