@@ -41,7 +41,7 @@ export const useKanjiForm = () => {
       postcode: '',
       address: '',
       name: '',
-      phoneNumber: '08063638429',
+      phoneNumber: '',
     },
   });
 
