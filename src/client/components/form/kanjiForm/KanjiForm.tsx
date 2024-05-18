@@ -66,9 +66,9 @@ const KanjiForm = ({ disabled, kanjiForm, onSubmit, isPending }: KanjiFormProps)
                   <FormLabel className='text-left'>{label}</FormLabel>
                   {name === 'postcode' ? (
                     <LoadingButton
-                      variant='outline'
+                      variant='default'
                       size='sm'
-                      className='ml-3'
+                      className='ml-3 p-1 text-xs h-auto'
                       disabled={!success || isPending || disabled}
                       loading={isGetPostcodePending}
                       onClick={handleSearchButtonClick}
