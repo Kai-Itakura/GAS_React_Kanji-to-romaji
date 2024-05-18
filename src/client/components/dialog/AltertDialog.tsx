@@ -29,12 +29,7 @@ const FormAlertDialog = ({ buttonText, title, buttonDisabled, clickHandler }: Fo
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>いいえ</AlertDialogCancel>
-          <AlertDialogAction
-            className='p-0'
-            onClick={clickHandler}
-          >
-            はい
-          </AlertDialogAction>
+          <AlertDialogAction onClick={clickHandler}>はい</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

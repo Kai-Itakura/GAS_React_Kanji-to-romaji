@@ -35,7 +35,6 @@ export const useGetPostcode = <T>() => {
       }
     },
     onError: (error) => {
-      console.log('🚀 ~ useGetPostcode ~ error:', error);
       toast({ description: error.message, variant: 'textRed', className: cn('right-0') });
     },
   });

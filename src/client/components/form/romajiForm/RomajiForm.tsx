@@ -5,25 +5,25 @@ import { RomajiDataType } from '../types/formTypes';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
-import { selectContents } from '../utils/FormValidation';
+import { KanjiFormSchema, selectContents } from '../utils/FormValidation';
 import { Textarea } from '@/components/ui/textarea';
 import UrlDialog from '@/components/dialog/urlDialog';
 import { useRomajiStore } from '../store/store';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
 import FormAlertDialog from '@/components/dialog/AltertDialog';
 import { LoadingButton } from '@/components/ui/loadingButton';
-import { useKanjiForm } from '../kanjiForm/hooks';
+import { UseFormReset } from 'react-hook-form';
+import { z } from 'zod';
 
 type RomajiFormProps = {
   romajiData: RomajiDataType;
+  reset: UseFormReset<z.infer<typeof KanjiFormSchema>>;
 };
 
-const RomajiForm = ({ romajiData }: RomajiFormProps) => {
+const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
   const setRomajiData = useRomajiStore((state) => state.setRomajiData);
 
-  const { kanjiForm } = useKanjiForm();
-
-  const { romajiForm, onSubmit, url, isPending } = useRomajiForm(romajiData, kanjiForm.reset);
+  const { romajiForm, onSubmit, url, isPending } = useRomajiForm(romajiData, reset);
   const { control, trigger, watch } = romajiForm;
 
   // フォーム内のセレクトでzodのバリデーションをトリガーするための処理
@@ -59,7 +59,10 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
               <FormItem className='mb-7'>
                 <FormLabel className='text-left block'>郵便番号</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage className='text-left' />
               </FormItem>
@@ -76,6 +79,7 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
                     {...field}
                     wrap='soft'
                     rows={3}
+                    disabled={isPending}
                   />
                 </FormControl>
                 <FormMessage className='text-left' />
@@ -89,7 +93,10 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
               <FormItem className='mb-6'>
                 <FormLabel className='text-left block'>名前１</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage className='text-left' />
               </FormItem>
@@ -102,7 +109,10 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
               <FormItem className='mb-6'>
                 <FormLabel className='text-left block'>名前２</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage className='text-left' />
               </FormItem>
@@ -117,6 +127,7 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={isPending}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -145,7 +156,10 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
               <FormItem className='mb-7'>
                 <FormLabel className='text-left block'>電話番号</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage className='text-left' />
               </FormItem>
@@ -171,7 +185,7 @@ const RomajiForm = ({ romajiData }: RomajiFormProps) => {
         <UrlDialog
           title='作成したドキュメントを開きますか？'
           body={url}
-          reset={kanjiForm.reset}
+          reset={reset}
         />
       )}
     </>
