@@ -12,6 +12,7 @@ import { useRomajiStore } from '../store/store';
 import FormButtonLayout from '@/components/layout/FormButtonLayout';
 import FormAlertDialog from '@/components/dialog/AltertDialog';
 import { LoadingButton } from '@/components/ui/loadingButton';
+import { CheckIcon } from 'lucide-react';
 import { UseFormReset } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -56,8 +57,8 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
             control={control}
             name='rPostcode'
             render={({ field }) => (
-              <FormItem className='mb-7'>
-                <FormLabel className='text-left block'>郵便番号</FormLabel>
+              <FormItem className='mb-7 text-left'>
+                <FormLabel className='text-left'>郵便番号</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -72,8 +73,8 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
             control={control}
             name='rAddress'
             render={({ field }) => (
-              <FormItem className='mb-7'>
-                <FormLabel className='text-left block'>住所</FormLabel>
+              <FormItem className='mb-7 text-left'>
+                <FormLabel className='text-left'>住所</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
@@ -90,8 +91,11 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
             control={control}
             name='rName1'
             render={({ field }) => (
-              <FormItem className='mb-6'>
-                <FormLabel className='text-left block'>名前１</FormLabel>
+              <FormItem className='mb-6 text-left'>
+                <FormLabel className='text-left'>名前１</FormLabel>
+                {romajiForm.getValues().selectName === field.name ? (
+                  <CheckIcon className='!mt-0 inline text-emerald-500' />
+                ) : null}
                 <FormControl>
                   <Input
                     {...field}
@@ -106,8 +110,11 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
             control={control}
             name='rName2'
             render={({ field }) => (
-              <FormItem className='mb-6'>
-                <FormLabel className='text-left block'>名前２</FormLabel>
+              <FormItem className='mb-6 text-left'>
+                <FormLabel className='text-left'>名前２</FormLabel>
+                {romajiForm.getValues().selectName === field.name ? (
+                  <CheckIcon className='!mt-0 inline text-emerald-500' />
+                ) : null}
                 <FormControl>
                   <Input
                     {...field}
@@ -122,8 +129,8 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
             control={control}
             name='selectName'
             render={({ field }) => (
-              <FormItem className='mb-7'>
-                <FormLabel className='text-left block'>どちらかの名前を選択</FormLabel>
+              <FormItem className='mb-7 text-left'>
+                <FormLabel className='text-left'>どちらかの名前を選択</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -153,8 +160,8 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
             control={control}
             name='rPhoneNumber'
             render={({ field }) => (
-              <FormItem className='mb-7'>
-                <FormLabel className='text-left block'>電話番号</FormLabel>
+              <FormItem className='mb-7 text-left'>
+                <FormLabel className='text-left'>電話番号</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
