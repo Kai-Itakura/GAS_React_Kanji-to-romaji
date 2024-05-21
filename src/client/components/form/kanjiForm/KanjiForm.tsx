@@ -54,7 +54,7 @@ const KanjiForm = ({ disabled, kanjiForm, onSubmit, isPending }: KanjiFormProps)
       <Form {...kanjiForm}>
         <form
           onSubmit={onSubmit}
-          className='h-fit w-full max-w-2xl bg-slate-50 p-10 rounded-xl border  text-card-foreground shadow'
+          className='form-layout'
         >
           {kanjiFormFields.map(({ name, label, type }) => (
             <FormField

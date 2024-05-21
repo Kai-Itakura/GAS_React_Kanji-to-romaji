@@ -50,7 +50,7 @@ const RomajiForm = ({ romajiData, reset }: RomajiFormProps) => {
       <Form {...romajiForm}>
         <form
           onSubmit={onSubmit}
-          className='h-fit w-full max-w-2xl bg-slate-50 p-10 rounded-xl border  text-card-foreground shadow'
+          className='form-layout'
           ref={formRef}
         >
           <FormField
